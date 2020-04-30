@@ -1,0 +1,29 @@
+* Parts
+
+| Name                | Qty | Price, $ |
+|---------------------+-----+----------|
+| Diodes 1n4148       | 100 |     0.78 |
+| Keys Gateron Brown  |  50 |    21.00 |
+| Keys Gateron Red    |  10 |          |
+| Keys Gateron Other  |   5 |          |
+| Keycaps PBT DSA     |  65 |    17.90 |
+| Atmega32u4          |   1 |     2.88 |
+| Wrapping Wire 30AWG | 10m |          |
+| Case                |   1 |          |
+|---------------------+-----+----------|
+|                     |     |    42.56 |
+#+TBLFM: @>$3=vsum(@I..@II)
+
+* Layout
+- To find best layout for my hands I've put several stripes of masking tape glue side up on a sheet of paper.
+- Then I've adjusted columns to my liking and measured the offsets.
+- I have Gateron switches which are Cherry-MX compatible. So the hole size is 14x14 mm and distance between holes should be 5 mm.
+- Thumb cluster is parameterized in polar coordinates.
+
+* Case
+I'm going to choose one of the options.
+- PCB only
+- 3d printed
+- laser cutted
+* Hand-wiring
+*
