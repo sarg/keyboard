@@ -22,8 +22,12 @@
 
 * Case
 I'm going to choose one of the options.
-- PCB only
-- 3d printed
-- laser cutted
+1. PCB only
+2. 3d printed
+3. laser cutted
+   price estimation:
+   - $5.14 x 2 + $9 (fixed, handling) = $19.28 (ponoko)
+   - €8.20 x 2 + shipping (formulor.de), no 1.5mm material
+    
 * Hand-wiring
 *
