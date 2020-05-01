@@ -15,14 +15,20 @@
 #+TBLFM: @>$3=vsum(@I..@II)
 
 * Layout
+[[./layout_v1.jpg]]
+
 - To find best layout for my hands I've put several stripes of masking tape glue side up on a sheet of paper.
 - Then I've adjusted columns to my liking and measured the offsets.
 - I have Gateron switches which are Cherry-MX compatible. So the hole size is 14x14 mm and distance between holes should be 5 mm.
 - Thumb cluster is parameterized in polar coordinates.
 
 * Case
+Cardboard prototype:
+[[./cardboard_v1.jpg]]
+
 I'm going to choose one of the options.
 1. PCB only
+   jlcpcb, x5 ~ 27$ + 11$ shipping
 2. 3d printed
 3. laser cutted
    price estimation:
@@ -30,4 +36,3 @@ I'm going to choose one of the options.
    - €8.20 x 2 + shipping (formulor.de), no 1.5mm material
     
 * Hand-wiring
-*
