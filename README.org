@@ -23,9 +23,13 @@
 - Thumb cluster is parameterized in polar coordinates.
 
 * Case
-Cardboard prototype:
+Cardboard prototypes:
+** v1
 [[./cardboard_v1.jpg]]
+** v2
+[[./cardboard_v2.jpg]]
 
+** manufacturing
 I'm going to choose one of the options.
 1. PCB only
    jlcpcb, x5 ~ 27$ + 11$ shipping
