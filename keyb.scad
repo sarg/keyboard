@@ -9,21 +9,17 @@
 
 */
 
+$fn = 50;
 hole_size = 14;
-
 deepening = 5;
 wiring_space = 5;
-thickness = 5;
+thickness = 4;
+include <controller.scad>;
 wall_height = wiring_space+thickness+deepening;
-
 mounting_plate_thickness = 1.5;
-wall_thickness = 4;
+wall_thickness = 2;
 sep = 5;
-
-// controller board
-ic_thickness = 1;
-ic_size=[18,33];
-ic_loc=[2.5*hole_size+3*sep+ic_size[0]/2, -hole_size*4+25, 0];
+ic_loc=[2.5*hole_size+3*sep+ic_size[0]/2+wall_thickness, -hole_size*4+35, 0];
 
 // thumb sector
 tx = sep; ty = -167; l = 100; angle = 12;
@@ -69,19 +65,13 @@ module allkeys() {
     thumbs() children();
 }
 
-module controller() {
-    translate(ic_loc)
-        square(size=ic_size, center=true);
-}
-
 module perimeter() {
     union() {
-        offset(r=-10) offset(r=10) // round corners
+        offset(r=-5) offset(r=5) // round corners
             offset(delta=sep) allkeys()
             /* offset(r=-5) offset(r=5) */
             square(hole_size, center=true);
 
-        controller();
     }
 }
 
@@ -91,22 +81,23 @@ module clamp_space() {
 
 module wall() {
     linear_extrude(height=wall_height)
+    union() {
         difference() {
-        offset(wall_thickness) perimeter();
-        perimeter();
+            offset(wall_thickness) children();
+            children();
+        }
     }
 }
 
 module plate() {
-    translate([0,0,wiring_space])
-        difference() {
-            linear_extrude(height=thickness)
-                difference() {
-                    perimeter();
-                    allkeys() hole();
-                }
-            linear_extrude(height=thickness - mounting_plate_thickness)
-                allkeys() clamp_space();
+    difference() {
+        linear_extrude(height=thickness)
+            difference() {
+                perimeter();
+                allkeys() hole();
+            }
+        linear_extrude(height=thickness - mounting_plate_thickness)
+            allkeys() clamp_space();
     }
 }
 
@@ -122,68 +113,103 @@ module 3dkeys() {
         allkeys() cherry_mx();
 }
 
-module usb() {
-    usb_w = 12; usb_h = 8;usb_l=15;
-    translate([0,usb_l/2, 0])
-        cube([usb_w, usb_l, usb_h], center=true);
+module perimeter_with_controller() {
+    union() {
+        translate(ic_loc) controller_perimeter();
+        perimeter();
+    }
 }
 
-module cutout() {
-    union() {
-        translate(ic_loc + [0, ic_size[1]/2+2.5, wiring_space+thickness+1])
-            usb();
+module bottom() {
+    color("#303030") {
+        wall() perimeter_with_controller();
+    }
 
-        // submerge controller in the plate
-        translate([0,0,wiring_space+thickness-ic_thickness])
-            linear_extrude(height=ic_thickness+1)
-            controller();
+    // bottom plate
+    translate([0,0,-1])
+        linear_extrude(height=1)
+        offset(wall_thickness)
+        perimeter_with_controller();
 
-        translate([0,0,wiring_space])
-            linear_extrude(height=2)
-            controller();
-
-        translate([0,0,wiring_space-1]) {
-            linear_extrude(height=thickness+1)
-                difference() {
-                    controller();
-
-                    translate(ic_loc)
-                        square(size=[ic_size[0]-6, ic_size[1]], center=true);
-                }
+    burt_thickness = wiring_space;
+    color("red")
+        translate([0,0,wiring_space-burt_thickness])
+        linear_extrude(height=burt_thickness)
+        difference() {
+            perimeter_with_controller();
+            offset(-1.5) perimeter_with_controller();
         }
-
-        usb_socket_height=2;
-        translate(ic_loc + [0, ic_size[1]/2, wiring_space+thickness+usb_socket_height/2])
-            cube([8,5,usb_socket_height], center=true);
-    }
 }
 
 
-difference() {
-    union() {
-        wall();
-        plate();
+
+
+module ear() {
+    translate([0,0,-1])
+    difference() {
+        linear_extrude(height=10)
+            offset(2) offset(-2)
+        hull() {
+            circle(d=12);
+            square(6);
+        }
+        cylinder(h=10,d=6);
     }
-    cutout();
 }
 
+module ears() {
+    // left top
+    translate([-4*(hole_size+sep),-30]) ear();
+    translate([-4*(hole_size+sep),-30]) rotate(-90) ear();
 
+    // left bottom
+    translate([-4*(hole_size+sep),-74]) ear();
+    translate([-4*(hole_size+sep),-74]) rotate(-90) ear();
+
+    // top right
+    translate([(hole_size+sep),10]) rotate(180) ear();
+
+    // bottom right
+    translate(ic_loc+[-4,-39]) rotate(90) ear();
+}
+
+module usb_cutout() {
+    translate([0, ic_size[1]/2, thickness]) usb();
+    translate([0, ic_size[1]/2, thickness+usb_socket_height/2])
+        cube([8,5,usb_socket_height], center=true);
+}
+
+module trrs_cutout() {
+    translate(trrs_pos) {
+        translate([ic_size[0]/2+wall_thickness,0,0]) {
+            rotate([0,90,0]) cylinder(h=4.5,d=6);
+
+        }
+    }
+}
+
+module bottom_with_cutouts() {
+    difference() {
+        bottom();
+        translate(ic_loc+[0,0,wiring_space])
+            union() { usb_cutout(); trrs_cutout(); }
+    }
+}
+
+ears();
+bottom_with_cutouts();
+translate([0,0,wiring_space] + [0,0,40]) {
+    plate();
+    translate(ic_loc) controller();
+}
 
 if ($preview && false)
 {
-    /* color("white", 0.5) 3dkeys(); */
+    color("white", 0.5) 3dkeys();
 
     /* color("black") */
     /*     translate(ic_loc + [0, ic_size[1]/2+2.5, wiring_space+thickness+1]) */
     /*         usb(); */
 
-    color("blue") {
-        translate([0,0,wiring_space+thickness-ic_thickness])
-            linear_extrude(height=ic_thickness)
-            controller();
-
-        translate(ic_loc + [0, ic_size[1]/2, wiring_space+thickness+1])
-            cube([8,5,2], center=true);
-    }
 
 }
