@@ -100,16 +100,16 @@ translate([0,0,4 +5.3 +0.82])
 			translate([0,0,-4 -5.3 -5.5 -2/2]) //steam + top + bottom (measured 5.5)
 				cylinder(r=3.85/2, h=2, center=true);
 			translate([0,0,-4 -5.3 -5.5 -2 -1/2]) //steam + top + bottom (measured 5.5)
-				cylinder(r2=3.85/2, r=2.8/2, h=1, center=true);
+				cylinder(r2=3.85/2, r1=2.8/2, h=1, center=true);
 			// 4.2 PCB pins
 			translate([4.95,0,-4 -5.3 -5.5 -2/2]) //steam + top + bottom (measured 5.5)
 				cylinder(r=1.6/2, h=2, center=true);
 			translate([4.95,0,-4 -5.3 -5.5 -2 -1/2]) //steam + top + bottom (measured 5.5)
-				cylinder(r2=1.6/2, r=1/2, h=1, center=true);
+				cylinder(r2=1.6/2, r1=1/2, h=1, center=true);
 			translate([-4.95,0,-4 -5.3 -5.5 -2/2]) //steam + top + bottom (measured 5.5)
 				cylinder(r=1.6/2, h=2, center=true);
 			translate([-4.95,0,-4 -5.3 -5.5 -2 -1/2]) //steam + top + bottom (measured 5.5)
-				cylinder(r2=1.6/2, r=1/2, h=1, center=true);
+				cylinder(r2=1.6/2, r1=1/2, h=1, center=true);
 		}
 
 		// 5. pins
