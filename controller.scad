@@ -77,9 +77,6 @@ module controller() {
     }
 
     if ($preview) {
-        color("red")
-            trrs_socket();
-
         color("blue")
             translate([0,0,thickness]) promicro();
 

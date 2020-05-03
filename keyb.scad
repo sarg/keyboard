@@ -89,6 +89,7 @@ module wall() {
     }
 }
 
+
 module plate() {
     difference() {
         linear_extrude(height=thickness)
@@ -109,7 +110,7 @@ module cherry_mx() {
 use <cap.scad>;
 
 module 3dkeys() {
-    translate([0,0,wiring_space+thickness])
+    translate([0,0,thickness])
         allkeys() cherry_mx();
 }
 
@@ -196,16 +197,35 @@ module bottom_with_cutouts() {
     }
 }
 
-ears();
-bottom_with_cutouts();
-translate([0,0,wiring_space] + [0,0,40]) {
-    plate();
-    translate(ic_loc) controller();
+module plate_part() {
+    difference() {
+        union() {
+            plate();
+            translate(ic_loc) controller();
+        }
+
+        // to ensure that the plate could be inserted into the case
+        // trim 0.2 mm from it
+        linear_extrude(height=thickness)
+            difference() {
+                perimeter_with_controller();
+                offset(-0.2) perimeter_with_controller();
+            }
+    }
 }
 
-if ($preview && false)
+ears();
+bottom_with_cutouts();
+translate([0,0,wiring_space] + [200,0,0]) {
+    plate_part();
+
+    /* if ($preview) */
+        color("white", 0.5) 3dkeys();
+}
+
+/* if ($preview) */
 {
-    color("white", 0.5) 3dkeys();
+    color("red") translate(ic_loc + [0,0,wiring_space]) trrs_socket();
 
     /* color("black") */
     /*     translate(ic_loc + [0, ic_size[1]/2+2.5, wiring_space+thickness+1]) */
