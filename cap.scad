@@ -1,14 +1,10 @@
 module keycap() {
-    hull()
-    {
-        linear_extrude(height=1)
-            difference() {
-            square(size=18, center=true);
-            square(size=16, center=true);
+    translate([0,0,0.5]) {
+        hull() {
+            cube(size=[18,18,1], center=true);
+            translate([0,0,7])
+                cube(size=[12,12,1], center=true);
         }
-        translate([0,0,7])
-            linear_extrude(height=1)
-            square(size=12, center=true);
     }
 }
 
