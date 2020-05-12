@@ -87,24 +87,23 @@
 
 (defn tent-hole [h]
   (with-center nil
-    (with-fs 6
-      (mirror [0 0 1]
-        (difference
-          (extrude-chamfer {:chamfer 2.5 :faces [false true] :height h}
-            (hull
-              (translate [-6.5 0 0]
-                (square 0.1 17 :center true))
-              (translate [4.5 0 0]
-                (circle (+ (/ 5 2) 2.5 1.5 1)))))
-          
-          (translate [4.5 0 -1]
-            (with-fn 6 (cylinder (/ 9.3 2) (+ 5 0.1))) ;
-            (polyhole (/ 5 2) (+ h 2))))))))
+    (mirror [0 0 1]
+      (difference
+        (extrude-chamfer {:chamfer 2.5 :faces [false true] :height h}
+          (hull
+            (translate [-6.5 0 0]
+              (square 0.1 17 :center true))
+            (translate [4.5 0 0]
+              (circle (+ (/ 5 2) 2.5 1.5 1)))))
+        
+        (translate [4.5 0 -1]
+          (with-fn 6 (cylinder (/ 9.2 2) (+ 5 0.1))) ;
+          (polyhole (/ 5 2) (+ h 2)))))))
 
 (defn tents [tent-list]
   (->> tent-list
     (map (fn [[[x y] a]]
-           (translate [x y 0]
+           (translate [x y -0.04]
              (rotate [0 0 a]
                (tent-hole 8)))))
     (apply union)))
@@ -251,7 +250,6 @@
 (spit "test-keyb.scad"
   (write-scad
     (use "cap.scad")
-    (use "controller.scad")
     (use "../ext/scad-redox-case/Lenbok_Utils/utils.scad")
     ;; (translate [21 -9.6 0] (call-module 'promicro))
     ;; (translate (map +
@@ -308,6 +306,12 @@
 
           (translate [0 0 1.5] clamps))))))
 
+(spit "test-ic.scad"
+  (write-scad
+    (use "../ext/scad-redox-case/Lenbok_Utils/utils.scad")
+    (kbd []
+         :ic-loc [0 0 0]
+         :tent-loc [[[9 -55] (- halfpi)]])))
 
 (defn d2 [d]
   (/ (Math/round (* d 100.0)) 100.0))
