@@ -1,17 +1,28 @@
 * Parts
 
-| Name                | Qty | Price, $ |
-|---------------------+-----+----------|
-| Diodes 1n4148       | 100 |     0.78 |
-| Keys Gateron Brown  |  50 |    21.00 |
-| Keys Gateron Red    |  10 |          |
-| Keys Gateron Other  |   5 |          |
-| Keycaps PBT DSA     |  65 |    17.90 |
-| Atmega32u4          |   1 |     2.88 |
-| Wrapping Wire 30AWG | 10m |          |
-| Case                |   1 |          |
-|---------------------+-----+----------|
-|                     |     |    42.56 |
+| Name               |   Qty | Price, $ |
+|--------------------+-------+----------|
+| Diodes 1n4148      |   100 |     0.78 |
+| Keys Gateron Brown |    50 |    21.00 |
+| Keys Gateron Red   |    10 |          |
+| Keys Gateron Other |     5 |          |
+| Keycaps PBT DSA    |    65 |    17.90 |
+| Atmega32u4         |     1 |     2.88 |
+| Atmega32u4         |     1 |     3.22 |
+| Wires              | 1 set |      2.2 |
+| 3.5mm plug         |     2 |      0.9 |
+| 3.5mm cable        |     1 |     1.58 |
+| encoder            |     5 |     1.78 |
+| knob               |    10 |     1.40 |
+| Case               |     1 |          |
+|--------------------+-------+----------|
+| soldering paste    |     1 |          |
+| tent screws        |     8 |          |
+| plastidip          |     1 |          |
+| tent fixing nuts   |     4 |          |
+| tent nuts M5       |     4 |          |
+|--------------------+-------+----------|
+|                    |       |    53.64 |
 #+TBLFM: @>$3=vsum(@I..@II)
 
 * Layout
@@ -22,8 +33,7 @@
 - I have Gateron switches which are Cherry-MX compatible. So the hole size is 14x14 mm and distance between holes should be 5 mm.
 - Thumb cluster is parameterized in polar coordinates.
 
-* Case
-Cardboard prototypes:
+* Case design
 ** v1
 [[./cardboard_v1.jpg]]
 ** v2
@@ -33,10 +43,72 @@ Cardboard prototypes:
 I'm going to choose one of the options.
 1. PCB only
    jlcpcb, x5 ~ 27$ + 11$ shipping
-2. 3d printed
+2. *3d printed*
 3. laser cutted
    price estimation:
    - $5.14 x 2 + $9 (fixed, handling) = $19.28 (ponoko)
    - €8.20 x 2 + shipping (formulor.de), no 1.5mm material
-    
+
+3d printing it is. Next time I'll try PCBs. It seems that you can use PCB as top plate and the manufacturer could mill holes of any shape.
+* 3d printing
+https://thomasbaart.nl/2019/04/07/cheat-sheet-custom-keyboard-mounting-styles/
+
+- [[https://all3dp.com/1/3d-printing-support-structures/][need of support structures for overhang]]
+- tolerances for an easy assembly
+- choosing proper thickness to ensure integrity
+
+Requirements.
+1. switch should be firmly attached to the keyboard
+   switch is designed to be mounted on a panel 1.5 mm thick and soldered onto PCB
+   you can select one of those options - pcb+panel, panel only, pcb only
+
+   produces: mounting place
+
+2. switch should be positioned under the finger and easily accessible without much finger movement
+   there are few ergonomic layouts that minimize finger movement. Just take one and adapt it to your hands
+
+   2.1 keycaps are wider than the switch body. there should be minimal distance between keycaps so that they don't touch
+   ortholinear + thumb cluster shaped as an arc
+
+   produces: layout
+
+3. mounting plate should be sturdy enough to not bend when typing
+
+   produces: plate thickness
+
+4. switches should be wired to the controller
+   pcb or handwiring. Both need some vertical space
+   something that elevates the plate needs to be implemented:
+   - pins
+   - another plate
+
+   produces: wiring space
+
+5. controller should have some place
+
+   produces: controller location
+
+6. underside of the keyboard should be protected
+   pcb or handwiring should be protected from water spills and mechanical damage
+
+   produces: bottom plate
+
+7. optional: halves of a split keyboard should communicate
+
+   produces: cable between halves, connectors
+
+9. optional: tilt/tent
+
+   produces: tent brackets
+
+from handbook of 3d printing
+make wall thickness proportional to nozzle width
+add fillets everywhere
+<45 degree overhang doesn't require support
+
+** first print
+For first print I've prepare a single row of 5 keys where each hole has size $14+i*0.1, i in [-2..2]$. I've found 14-0.2 the best. Then I've prepared small test case where I've mounted all the different types of switches I have. I had to redesign promicro mount after the print as the board wasn't fitting nicely.
+
+[[./test-print.jpg]]
+
 * Hand-wiring
