@@ -16,13 +16,19 @@
    :wall-thickness 2.4
    :plate-thickness 2.6})
 
+(def ic-w 18.5)
+(def ic-h 33.5)
+(def ic-z 8)
+
 (defn col [cnt cx cy]
   (->> (range cnt)
     (map #(* (+ (:switch-size opts) (:switch-sep opts)) %1))
     (map #(vector cx (- (+ cy %1)) 0))))
 
 (def switch-hole
-  (let [f (- (:switch-size opts) 0.2)] (square f f))) 
+  ;; shrink hole a little for a better switch fit
+  (let [f (- (:switch-size opts) 0.2)]
+    (square f f)))
 
 (defn keyiter [layout f]
   (->> layout
@@ -34,29 +40,24 @@
 (defmacro round-corners [r & b]
   `(offset (- ~r) (offset ~r ~@b)))
 
-(defmacro s-x [s] `(:x (second ~s)))
-(defmacro s-y [s] `(:y (second ~s)))
-
-(def ic-rect-x 18.2)
-(def ic-rect-y 33.2)
-
 (def ic-rect
   (mirror [0 1 0]
-    (square ic-rect-x ic-rect-y :center nil)))
+    (square ic-w ic-h :center nil)))
 
 (def ic-pin-cutout
-  (->>
-    (square (- ic-rect-x (* 2.5 2))
-      ic-rect-y :center nil)
-    (translate [2.5 (- ic-rect-y) 0])
-    (difference ic-rect)
-    (resize [0 (- ic-rect-y 0.5) 0])
-    (translate [0 -0.5 0])))
+  (let [w 2.8]
+    (->>
+      (square (- ic-w (* w 2))
+        ic-h :center nil)
+      (translate [w (- ic-h) 0])
+      (difference ic-rect)
+      (resize [0 (- ic-h 0.5) 0])
+      (translate [0 -0.5 0]))))
 
 (def jack-d 9)
 (def jack-loc
   [0
-   (- (+ (:switch-sep opts) (/ jack-d 2) ic-rect-y))
+   (- (+ (:switch-sep opts) (/ jack-d 2) ic-h))
    0])
 
 (defn perimeter [layout ic-loc ext]
@@ -67,7 +68,7 @@
 
       (translate (map + jack-loc [0 (:switch-sep opts) 0]) 
         (offset {:delta (:switch-sep opts)}
-          (mirror [0 1 0] (square ic-rect-x jack-d :center nil)))))
+          (mirror [0 1 0] (square ic-w jack-d :center nil)))))
 
     (map #(%1) ext)
     
@@ -84,6 +85,7 @@
 ;; (defn extrude-chamfer [opts & args]
 ;;   (extrude-linear (conj opts {:center nil}) args))
 (defmacro extrude-chamfer [& args] `(call-module-with-block 'chamfer_extrude ~@args))
+(defmacro rounded-slot [& args] `(call-module 'slot ~@args))
 
 (defn tent-hole [h]
   (with-center nil
@@ -109,12 +111,10 @@
     (apply union)))
 
 (defn kbd [layout & {:keys [ic-loc tent-loc ext ext-holes]}]
-  (let [ic-y 8
-
-        ic-body
+  (let [ic-body
         (mirror [0 0 1]
           (translate [0 0 1.5]
-            (extrude-chamfer {:height ic-y :faces [false true]}
+            (extrude-chamfer {:height ic-z :faces [false true]}
               (offset {:delta 2}
                 ic-rect))))
 
@@ -135,26 +135,30 @@
 
 
         usb-cutout
-        (let [w 8.5 h 4]
-          (translate [(/ ic-rect-x 2)
+        (let [w 8 h 4]
+          (translate [(/ ic-w 2)
                       (:wall-thickness opts)
-                      (- ic-y 1 (/ h 2))]
-            (cube w 8 h)))
+                      (- ic-z 1 (/ h 2))]
+            ;; (cube w 8 h)
+            (rotate [halfpi 0 0]
+              (with-fn 30
+                (rounded-slot (/ h 2) 8 w)))
+            ))
 
         ic-pins-cutout
-        (translate [0 0 ic-y]
+        (translate [0 0 ic-z]
           (extrude-linear {:height 1.5 :center nil}
             ic-pin-cutout))
 
         ic-body-cutout
         (translate [0 0 -1]
-          (extrude-linear {:height (+ ic-y 1) :center nil}
+          (extrude-linear {:height (+ ic-z 1) :center nil}
             ic-rect))
 
         jack-hole
         (translate
           (map + jack-loc
-            [ic-rect-x 0
+            [ic-w 0
              (/ (+ (:total-height opts) (:plate-thickness opts)) 2)])
           (rotate [0 halfpi 0] (polyhole 3.1 13)))
 
@@ -258,7 +262,7 @@
 
     ;;                     (+ 2 (:switch-sep opts) -0.1) 0])
     ;;                         jack-loc
-    ;;                        [ic-rect-x 0
+    ;;                        [ic-w 0
     ;;                         (- (+ (:plate-thickness opts)
     ;;                               (/ (- (:total-height opts)
     ;;                                     (:plate-thickness opts))
