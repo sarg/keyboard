@@ -17,8 +17,10 @@
    :plate-thickness 2.6})
 
 (def ic-w 18.5)
-(def ic-h 33.5)
+(def ic-h 35)
 (def ic-z 8)
+
+(defn d2 [d] (/ (Math/round (* d 100.0)) 100.0))
 
 (defn col [cnt cx cy]
   (->> (range cnt)
@@ -100,7 +102,7 @@
         
         (translate [4.5 0 -1]
           (with-fn 6 (cylinder (/ 9.2 2) (+ 5 0.1))) ;
-          (polyhole (/ 5 2) (+ h 2)))))))
+          (polyhole (/ 5.4 2) (+ h 2)))))))
 
 (defn tents [tent-list]
   (->> tent-list
@@ -155,21 +157,35 @@
           (extrude-linear {:height (+ ic-z 1) :center nil}
             ic-rect))
 
+        jack-z
+        (/ (+ (:total-height opts) (:plate-thickness opts)) 2)
+
+        jack-plate
+        (translate [(+ ic-w (:switch-sep opts)) 0 (- jack-z)]
+          (mirror [1 0 0]
+            (translate [0 -6 -4.72]     ; fix hardcode maybe
+              (cube (+ 1.6 (:wall-thickness opts)) 12 10 :center nil))))
+        
         jack-hole
         (translate
-          (map + jack-loc
-            [ic-w 0
-             (/ (+ (:total-height opts) (:plate-thickness opts)) 2)])
-          (rotate [0 halfpi 0] (polyhole 3.1 13)))
-
+          (map + jack-loc [ic-w 0 jack-z])
+          (translate [(- (:switch-sep opts) 2) 0 0]
+            (rotate [0 halfpi 0] (polyhole 4.5 3))
+            (translate [0 -4.5 0]
+              (cube 2 9 9 :center nil)))
+          (rotate [0 halfpi 0]
+            (polyhole 3.1 (+ 1 (:switch-sep opts)))))
+        
         ic-offset [0 (- (:switch-sep opts) 2) 0]]
 
     (union
       ;; (translate [0 0 -2.5 ] (keyiter layout cherry-mx))
+      ;;
       (difference
         (union
           (translate (map + ic-loc ic-offset)
-            ic-body)
+            ic-body
+            (translate jack-loc jack-plate))
           (difference
             (union walls (tents tent-loc))
 
@@ -202,54 +218,77 @@
     ;;   (cylinder 12.5 8 :center nil))
     ))
 
-(spit "wow.scad"
-      (write-scad
-       (use "cap.scad")
-       (use "../ext/scad-redox-case/Lenbok_Utils/utils.scad")
-       ;; (translate [-16 -70 (- (:plate-thickness opts))]
-       ;;            ec11-encoder)
-       (kbd
-         (concat
-           ;; columns
-           (col 3 (* -3 (+ (:switch-size opts) (:switch-sep opts))) 33)
-           (col 3 (* -2 (+ (:switch-size opts) (:switch-sep opts))) 33)
-           (col 3 (* -1 (+ (:switch-size opts) (:switch-sep opts))) 10)
-           (col 3 (*  0 (+ (:switch-size opts) (:switch-sep opts))) 0)
-           (col 3 (*  1 (+ (:switch-size opts) (:switch-sep opts))) 9)
-           (col 3 (*  2 (+ (:switch-size opts) (:switch-sep opts))) 10)
+(let [keymap
+      (concat
+        ["`" "esc" "tab"]
+        (map str "qazwsxedcrfvtgb")
+        ["win" "lalt" "lctrl" "space"])
+      
+      layout
+      (concat
+        ;; columns
+        (col 3 (* -3 (+ (:switch-size opts) (:switch-sep opts))) 33)
+        (col 3 (* -2 (+ (:switch-size opts) (:switch-sep opts))) 33)
+        (col 3 (* -1 (+ (:switch-size opts) (:switch-sep opts))) 10)
+        (col 3 (*  0 (+ (:switch-size opts) (:switch-sep opts))) 0)
+        (col 3 (*  1 (+ (:switch-size opts) (:switch-sep opts))) 9)
+        (col 3 (*  2 (+ (:switch-size opts) (:switch-sep opts))) 10)
 
-           ;; thumb is rotating around its joint so the thumb keys
-           ;; are located on an arc
-           (let [angle (deg->rad 12)
-                 l 100 cx 5 cy -167]
-             (->>
-               (range 4)
-               (map #(vector
-                       (+ cx (* l (Math/cos (- halfpi (* %1 angle)))))
-                       (+ cy (* l (Math/sin (- halfpi (* %1 angle)))))
-                       (- (* %1 angle))))
-               (map-indexed
-                 #(case %1
-                    ;; shift leftmost key a little for better reachability
-                    0 (map + [0 -6 0] %2)       
-                    %2)))))
+        ;; thumb is rotating around its joint so the thumb keys
+        ;; are located on an arc
+        (let [angle (deg->rad 12)
+              l 100 cx 5 cy -167]
+          (->>
+            (range 4)
+            (map #(vector
+                    (+ cx (* l (Math/cos (- halfpi (* %1 angle)))))
+                    (+ cy (* l (Math/sin (- halfpi (* %1 angle)))))
+                    (- (* %1 angle))))
+            (map-indexed
+              #(case %1
+                 ;; shift leftmost key a little for better reachability
+                 0 (apply vector (map + [0 -6 0] %2))       
+                 %2)))))]
 
-         :ic-loc
-         [(+ (* 3 (:switch-sep opts))
-            (* 2.5 (:switch-size opts)))
-          -3.1 0]
+  (spit "wow.scad"
+    (write-scad
+      (use "cap.scad")
+      (use "../ext/scad-redox-case/Lenbok_Utils/utils.scad")
+      ;; (translate [-16 -70 (- (:plate-thickness opts))]
+      ;;            ec11-encoder)
+      (kbd layout
 
-         :ext
-         [(fn encoder [] (translate [-16 -70] (square 28 28)))]
-         :ext-holes
-         [(fn encoder-hole []
-            (translate [-16 -70 -5] (polyhole 3.5 10)))]
+        :ic-loc
+        [(+ (* 3 (:switch-sep opts))
+           (* 2.5 (:switch-size opts)))
+         -3.1 0]
 
-         :tent-loc
-         [[[22 6] halfpi]
-          [[70 -71] (deg->rad 55)]
-          [[-36 -16] (deg->rad 135)]
-          [[-73 -70] pi]])))
+        :ext
+        [(fn encoder [] (translate [-16 -70] (square 28 28)))]
+        :ext-holes
+        [(fn encoder-hole []
+           (translate [-16 -70 -5] (polyhole 3.5 10)))]
+
+        :tent-loc
+        [[[22 6] halfpi]
+         [[70 -71] (deg->rad 55)]
+         [[-36 -16] (deg->rad 135)]
+         [[-73 -70] pi]])))
+
+  (spit "keyb.json"
+    (json/write-str
+      (let [min-x (Math/abs (apply min (map first layout)))
+            min-y (Math/abs (apply min (map second layout)))]
+
+        (first
+          (reduce (fn [[acc [px py]] [x y a n]]
+                    (let [nx (+ min-x x)
+                          ny (+ min-y y)
+                          rx (/ nx 19)
+                          ry (- (inc (/ (- ny py) 19)))]
+                      [(conj acc [{:x (d2 rx) :y (d2 ry)} n]) [nx ny]]))
+            [[] [0 (+ 38 min-y)]]
+            (map conj layout keymap)))))))
 
 (spit "test-keyb.scad"
   (write-scad
@@ -317,30 +356,7 @@
          :ic-loc [0 0 0]
          :tent-loc [[[9 -55] (- halfpi)]])))
 
-(defn d2 [d]
-  (/ (Math/round (* d 100.0)) 100.0))
 
-;; (spit "keyb.json"
-;;   (json/write-str
-;;     (let [min-x (Math/abs (apply min (map first layout)))
-;;           min-y (Math/abs (apply min (map second layout)))]
 
-;;       (first
-;;        (reduce (fn [[acc [px py]] [x y a]]
-;;                  (let [nx (+ min-x x)
-;;                        ny (+ min-y y)
-;;                        rx (/ nx 19)
-;;                        ry (- (inc (/ (- ny py) 19)))]
-;;                    [(conj acc [
-;;                                (if (> (Math/abs a) 0.01)
-;;                                  {:r (- (rad->deg a))
-;;                                   :x (- (d2 rx)) :y (- (d2 ry))
-;;                                   :rx (d2 rx) :ry (d2 ry)
-;;                                   }
-;;                                  {:x (d2 rx) :y (d2 ry)})
-;;                                "k"]) [nx ny]]))
-;;                [[] [0 (+ 38 min-y)]]
-;;                layout)))
-;;     ))
 
 1

@@ -112,3 +112,4 @@ For first print I've prepare a single row of 5 keys where each hole has size $14
 [[./test-print.jpg]]
 
 * Hand-wiring
+[[https://deskthority.net/viewtopic.php?f=7&t=6050&start=][BrownFox step by step - deskthority]]
