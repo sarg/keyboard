@@ -17,8 +17,8 @@
    :plate-thickness 2.6})
 
 (def ic-w 18.5)
-(def ic-h 35)
-(def ic-z 8)
+(def ic-h 34)
+(def ic-z 4)
 
 (defn d2 [d] (/ (Math/round (* d 100.0)) 100.0))
 
@@ -101,7 +101,7 @@
               (circle (+ (/ 5 2) 2.5 1.5 1)))))
         
         (translate [4.5 0 -1]
-          (with-fn 6 (cylinder (/ 9.2 2) (+ 5 0.1))) ;
+          (with-fn 6 (cylinder (/ 9.2 2) (+ 5.5 0.1))) ;
           (polyhole (/ 5.4 2) (+ h 2)))))))
 
 (defn tents [tent-list]
@@ -137,15 +137,11 @@
 
 
         usb-cutout
-        (let [w 8 h 4]
+        (let [w 8.2 h 4]
           (translate [(/ ic-w 2)
                       (:wall-thickness opts)
                       (- ic-z 1 (/ h 2))]
-            ;; (cube w 8 h)
-            (rotate [halfpi 0 0]
-              (with-fn 30
-                (rounded-slot (/ h 2) 8 w)))
-            ))
+            (cube w 8 h)))
 
         ic-pins-cutout
         (translate [0 0 ic-z]
@@ -169,10 +165,10 @@
         jack-hole
         (translate
           (map + jack-loc [ic-w 0 jack-z])
-          (translate [(- (:switch-sep opts) 2) 0 0]
+          (translate [(- (:switch-sep opts) (:wall-thickness opts)) 0 0]
             (rotate [0 halfpi 0] (polyhole 4.5 3))
             (translate [0 -4.5 0]
-              (cube 2 9 9 :center nil)))
+              (cube 3 9 9 :center nil)))
           (rotate [0 halfpi 0]
             (polyhole 3.1 (+ 1 (:switch-sep opts)))))
         
@@ -354,9 +350,7 @@
     (use "../ext/scad-redox-case/Lenbok_Utils/utils.scad")
     (kbd []
          :ic-loc [0 0 0]
-         :tent-loc [[[9 -55] (- halfpi)]])))
-
-
-
+         ;; :tent-loc [[[9 -55] (- halfpi)]]
+         )))
 
 1
