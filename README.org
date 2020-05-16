@@ -116,3 +116,69 @@ For first print I've prepare a single row of 5 keys where each hole has size $14
 
 * Hand-wiring
 [[https://deskthority.net/viewtopic.php?f=7&t=6050&start=][BrownFox step by step - deskthority]]
+
+* Firmware
+Consult [[https://beta.docs.qmk.fm/developing-qmk/c-development/hardware_keyboard_guidelines][documentation]].
+
+Create new template with =./util/new_keyboard.sh=
+
+#+BEGIN_SRC sh :dir sarg :results output :exports both
+tree --noreport
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+.
+├── config.h
+├── info.json
+├── keymaps
+│   └── default
+│       ├── config.h
+│       ├── keymap.c
+│       └── readme.md
+├── readme.md
+├── rules.mk
+├── sarg.c
+└── sarg.h
+#+end_example
+
+Let's go file by file do find minimal changes:
+
+** =config.h=
+#+BEGIN_EXAMPLE
+#define MATRIX_ROWS 10
+#define MATRIX_COLS 5
+
+#define MATRIX_ROW_PINS { D0, D5 }
+#define MATRIX_COL_PINS { F1, F0, B0 }
+
+#define DIODE_DIRECTION COL2ROW
+
+#define SOFT_SERIAL_PIN D0  // or D1, D2, D3, E6
+#+END_EXAMPLE
+
+** =info.json=
+Can be skipped, used in QMK web configurator.
+** =rules.mk=
+#+BEGIN_EXAMPLE
+BOOTLOADER = caterina
+SPLIT_KEYBOARD = yes
+#+END_EXAMPLE
+** =sarg.c=
+Could be left as is.
+** =sarg.h=
+Here you define a macro that returns array of arrays with your layout.
+#+INCLUDE: "./firmware/sarg.h" :lines "21-45" src c
+** =keymaps/default/keymap.c=
+Define layout in =keymaps= array.
+
+* First compilation.
+#+BEGIN_SRC sh
+bin/qmk compile -kb sarg -km default
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+...
+Checking file size of sarg_default.hex                                                              [OK]
+ * The firmware size is fine - 23964/28672 (83%, 4708 bytes free)
+#+END_EXAMPLE
