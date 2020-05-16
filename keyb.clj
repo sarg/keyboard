@@ -263,7 +263,7 @@
         [(fn encoder [] (translate [-16 -70] (square 28 28)))]
         :ext-holes
         [(fn encoder-hole []
-           (translate [-16 -70 -5] (polyhole 3.5 10)))]
+           (translate [-16 -70 -5] (polyhole 3.6 10)))]
 
         :tent-loc
         [[[22 6] halfpi]
