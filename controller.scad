@@ -6,11 +6,8 @@ trrs_d=8;
 trrs_w=10;
 
 trrs_pos=[0, -ic_size[1]/2-trrs_d/2-trrs_w/2,(thickness+deepening)/2-0.5];
-module usb() {
-    usb_w = 12; usb_h = 8;usb_l=15;
-    translate([0,usb_l/2, 0])
-        cube([usb_w, usb_l, usb_h], center=true);
-}
+
+function get_ic_size() = ic_size;
 
 module board() {
     square(size=ic_size, center=true);
@@ -67,7 +64,6 @@ module promicro() {
         cube([8,5,usb_socket_height]);
 }
 
-
 module controller() {
     difference() {
         linear_extrude(height=thickness)
@@ -83,4 +79,4 @@ module controller() {
     }
 }
 
-
+promicro();

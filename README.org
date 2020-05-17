@@ -117,6 +117,10 @@ For first print I've prepare a single row of 5 keys where each hole has size $14
 * Hand-wiring
 [[https://deskthority.net/viewtopic.php?f=7&t=6050&start=][BrownFox step by step - deskthority]]
 
+The keyboard has 22 keys per hand - 3 rows of 6 columns and 4 thumb keys. It fits in a 4x6 matrix and requires =4+6=10= pins. Encoder takes 2 pins and serial connection takes another 1. In total: 10 pins for keys + 2 for encoder + 1 for serial + GND + VCC = 15 pins.
+
+Some pins has extra functions and they have to be used last.
+
 * Firmware
 Consult [[https://beta.docs.qmk.fm/developing-qmk/c-development/hardware_keyboard_guidelines][documentation]].
 
@@ -142,20 +146,26 @@ tree --noreport
 └── sarg.h
 #+end_example
 
-Let's go file by file do find minimal changes:
+Let's go file by file to find minimal set of tweaks:
 
 ** =config.h=
-#+BEGIN_EXAMPLE
-#define MATRIX_ROWS 10
-#define MATRIX_COLS 5
+#+BEGIN_SRC c
+#define MATRIX_ROWS 8
+#define MATRIX_COLS 6
+/*
+quantum/split_common/matrix.c presumes that kbd is split evenly by rows
 
+#define ROWS_PER_HAND (MATRIX_ROWS / 2)
+*/
+
+// pinout http://i.imgur.com/wMNx2u6.png
 #define MATRIX_ROW_PINS { D0, D5 }
 #define MATRIX_COL_PINS { F1, F0, B0 }
 
 #define DIODE_DIRECTION COL2ROW
 
 #define SOFT_SERIAL_PIN D0  // or D1, D2, D3, E6
-#+END_EXAMPLE
+#+END_SRC
 
 ** =info.json=
 Can be skipped, used in QMK web configurator.
@@ -182,3 +192,7 @@ bin/qmk compile -kb sarg -km default
 Checking file size of sarg_default.hex                                                              [OK]
  * The firmware size is fine - 23964/28672 (83%, 4708 bytes free)
 #+END_EXAMPLE
+
+* TODO link
+
+Nicinabox has a [very nice and detailed guide](https://github.com/nicinabox/lets-split-guide) for the Let's Split keyboard, that covers most everything you need to know, including troubleshooting information.
