@@ -1,4 +1,5 @@
 (ns keyb
+  (:gen-class)
   (:require
    [clojure.data.json :as json]
    [clojure.java.io :as io])
@@ -214,143 +215,158 @@
     ;;   (cylinder 12.5 8 :center nil))
     ))
 
-(let [keymap
-      (concat
-        ["`" "esc" "tab"]
-        (map str "qazwsxedcrfvtgb")
-        ["win" "lalt" "lctrl" "space"])
-      
-      layout
-      (concat
-        ;; columns
-        (col 3 (* -3 (+ (:switch-size opts) (:switch-sep opts))) 33)
-        (col 3 (* -2 (+ (:switch-size opts) (:switch-sep opts))) 33)
-        (col 3 (* -1 (+ (:switch-size opts) (:switch-sep opts))) 10)
-        (col 3 (*  0 (+ (:switch-size opts) (:switch-sep opts))) 0)
-        (col 3 (*  1 (+ (:switch-size opts) (:switch-sep opts))) 9)
-        (col 3 (*  2 (+ (:switch-size opts) (:switch-sep opts))) 10)
+(defn -main [& args]
 
-        ;; thumb is rotating around its joint so the thumb keys
-        ;; are located on an arc
-        (let [angle (deg->rad 12)
-              l 100 cx 5 cy -167]
-          (->>
+  (let [keymap
+        (concat
+         ["`" "esc" "tab"]
+         (map str "qazwsxedcrfvtgb")
+         ["win" "lalt" "lctrl" "space"])
+      
+        layout
+        (concat
+         ;; columns
+         (col 3 (* -3 (+ (:switch-size opts) (:switch-sep opts))) 33)
+         (col 3 (* -2 (+ (:switch-size opts) (:switch-sep opts))) 33)
+         (col 3 (* -1 (+ (:switch-size opts) (:switch-sep opts))) 10)
+         (col 3 (*  0 (+ (:switch-size opts) (:switch-sep opts))) 0)
+         (col 3 (*  1 (+ (:switch-size opts) (:switch-sep opts))) 9)
+         (col 3 (*  2 (+ (:switch-size opts) (:switch-sep opts))) 10)
+
+         ;; thumb is rotating around its joint so the thumb keys
+         ;; are located on an arc
+         (let [angle (deg->rad 12)
+               l 100 cx 5 cy -167]
+           (->>
             (range 4)
             (map #(vector
-                    (+ cx (* l (Math/cos (- halfpi (* %1 angle)))))
-                    (+ cy (* l (Math/sin (- halfpi (* %1 angle)))))
-                    (- (* %1 angle))))
+                   (+ cx (* l (Math/cos (- halfpi (* %1 angle)))))
+                   (+ cy (* l (Math/sin (- halfpi (* %1 angle)))))
+                   (- (* %1 angle))))
             (map-indexed
-              #(case %1
-                 ;; shift leftmost key a little for better reachability
-                 0 (apply vector (map + [0 -6 0] %2))       
-                 %2)))))]
+             #(case %1
+                ;; shift leftmost key a little for better reachability
+                0 (apply vector (map + [0 -6 0] %2))       
+                %2)))))
 
-  (spit "wow.scad"
-    (write-scad
-      (use "cap.scad")
-      (use "../ext/scad-redox-case/Lenbok_Utils/utils.scad")
-      ;; (translate [-16 -70 (- (:plate-thickness opts))]
-      ;;            ec11-encoder)
-      (kbd layout
+        keyboard
+        (kbd layout
+             :ic-loc
+             [(+ (* 3 (:switch-sep opts))
+                 (* 2.5 (:switch-size opts)))
+              -3.1 0]
 
-        :ic-loc
-        [(+ (* 3 (:switch-sep opts))
-           (* 2.5 (:switch-size opts)))
-         -3.1 0]
+             :ext
+             [(fn encoder [] (translate [-16 -70] (square 28 28)))]
+             :ext-holes
+             [(fn encoder-hole []
+                (translate [-16 -70 0]
+                           (translate [0 0 -5] (polyhole 3.6 10))
+                           (translate [0 0 (- (:plate-thickness opts) 1.5)]
+                             (extrude-linear {:height 3 :center nil}
+                               (translate [(- 6 0.5) 0 0] (square 1 2))))))]
 
-        :ext
-        [(fn encoder [] (translate [-16 -70] (square 28 28)))]
-        :ext-holes
-        [(fn encoder-hole []
-           (translate [-16 -70 -5] (polyhole 3.6 10)))]
+             :tent-loc
+             [[[22 6] halfpi]
+              [[70 -71] (deg->rad 55)]
+              [[-36 -16] (deg->rad 135)]
+              [[-73 -70] pi]])]
 
-        :tent-loc
-        [[[22 6] halfpi]
-         [[70 -71] (deg->rad 55)]
-         [[-36 -16] (deg->rad 135)]
-         [[-73 -70] pi]])))
+    (spit "_right.scad"
+          (write-scad
+           (use "cap.scad")
+           (use "./scad-lenbok-utils/utils.scad")
+           ;; (translate [-16 -70 (- (:plate-thickness opts))]
+           ;;            ec11-encoder)
+           (mirror [1 0 0] keyboard)))
 
-  (spit "keyb.json"
-    (json/write-str
-      (let [min-x (Math/abs (apply min (map first layout)))
-            min-y (Math/abs (apply min (map second layout)))]
+    (spit "_left.scad"
+          (write-scad
+           (use "cap.scad")
+           (use "./scad-lenbok-utils/utils.scad")
+           keyboard))
 
-        (first
-          (reduce (fn [[acc [px py]] [x y a n]]
-                    (let [nx (+ min-x x)
-                          ny (+ min-y y)
-                          rx (/ nx 19)
-                          ry (- (inc (/ (- ny py) 19)))]
-                      [(conj acc [{:x (d2 rx) :y (d2 ry)} n]) [nx ny]]))
-            [[] [0 (+ 38 min-y)]]
-            (map conj layout keymap)))))))
+    (spit "keyb.json"
+          (json/write-str
+           (let [min-x (Math/abs (apply min (map first layout)))
+                 min-y (Math/abs (apply min (map second layout)))]
 
-(spit "test-keyb.scad"
-  (write-scad
-    (use "cap.scad")
-    (use "../ext/scad-redox-case/Lenbok_Utils/utils.scad")
-    ;; (translate [21 -9.6 0] (call-module 'promicro))
-    ;; (translate (map +
-    ;; (map + [(+ (* 1 (:switch-sep opts))
-    ;;                        (* 0.5 (:switch-size opts)))
+             (first
+              (reduce (fn [[acc [px py]] [x y a n]]
+                        (let [nx (+ min-x x)
+                              ny (+ min-y y)
+                              rx (/ nx 19)
+                              ry (- (inc (/ (- ny py) 19)))]
+                          [(conj acc [{:x (d2 rx) :y (d2 ry)} n]) [nx ny]]))
+                      [[] [0 (+ 38 min-y)]]
+                      (map conj layout keymap)))))))
 
-    ;;                     (+ 2 (:switch-sep opts) -0.1) 0])
-    ;;                         jack-loc
-    ;;                        [ic-w 0
-    ;;                         (- (+ (:plate-thickness opts)
-    ;;                               (/ (- (:total-height opts)
-    ;;                                     (:plate-thickness opts))
-    ;;                                  2)))])
-    ;;                            (rotate [0 halfpi 0] (polyhole 3 13)))
-    (kbd 
-      (concat
-        (col 3 (* 0 (+ (:switch-size opts) (:switch-sep opts))) 0)
-        (col 3 (* -1 (+ (:switch-size opts) (:switch-sep opts))) 0)
-        (col 3 (* -2 (+ (:switch-size opts) (:switch-sep opts))) 0))
+  (spit "_test-keyb.scad"
+        (write-scad
+         (use "cap.scad")
+         (use "./scad-lenbok-utils/utils.scad")
+         ;; (translate [21 -9.6 0] (call-module 'promicro))
+         ;; (translate (map +
+         ;; (map + [(+ (* 1 (:switch-sep opts))
+         ;;                        (* 0.5 (:switch-size opts)))
 
-      :ic-loc
-      (map + [(+ (* 1 (:switch-sep opts))
-                (* 0.5 (:switch-size opts)))
+         ;;                     (+ 2 (:switch-sep opts) -0.1) 0])
+         ;;                         jack-loc
+         ;;                        [ic-w 0
+         ;;                         (- (+ (:plate-thickness opts)
+         ;;                               (/ (- (:total-height opts)
+         ;;                                     (:plate-thickness opts))
+         ;;                                  2)))])
+         ;;                            (rotate [0 halfpi 0] (polyhole 3 13)))
+         (kbd 
+          (concat
+           (col 3 (* 0 (+ (:switch-size opts) (:switch-sep opts))) 0)
+           (col 3 (* -1 (+ (:switch-size opts) (:switch-sep opts))) 0)
+           (col 3 (* -2 (+ (:switch-size opts) (:switch-sep opts))) 0))
 
-              (+ 2 (:switch-sep opts) -0.1) 0])
-      :tent-loc
-      [[[24 -49] (- halfpi)]])))
+          :ic-loc
+          (map + [(+ (* 1 (:switch-sep opts))
+                     (* 0.5 (:switch-size opts)))
 
-(spit "calibrate.scad"
-  (write-scad
+                  (+ 2 (:switch-sep opts) -0.1) 0])
+          :tent-loc
+          [[[24 -49] (- halfpi)]])))
 
-    (let [allholes
-          (fn [c]
-            (->>
-              (range -2 3 1)
-              (map #(translate [(* 19 %1) 0 0]
-                      (let [s (+ 14 (* %1 0.1))]
-                        (c s))))))
+  (spit "_calibrate.scad"
+        (write-scad
+
+         (let [allholes
+               (fn [c]
+                 (->>
+                  (range -2 3 1)
+                  (map #(translate [(* 19 %1) 0 0]
+                                   (let [s (+ 14 (* %1 0.1))]
+                                     (c s))))))
           
-          holes (allholes #(square %1 %1))
-          clamps (allholes #(translate [0 0 2]
-                              (union
-                                (cube 4 (+ %1 1) 4)
-                                (cube (+ %1 1) 4 4))))
-          signs (allholes #(translate [-5 8 0] (text (str %1) :size 3)))
-          perimeter (offset {:delta 5} holes)]
+               holes (allholes #(square %1 %1))
+               clamps (allholes #(translate [0 0 2]
+                                            (union
+                                             (cube 4 (+ %1 1) 4)
+                                             (cube (+ %1 1) 4 4))))
+               signs (allholes #(translate [-5 8 0] (text (str %1) :size 3)))
+               perimeter (offset {:delta 5} holes)]
 
-      (union
-        (translate [0 0 2.5]
-          (extrude-linear {:height 0.4 :center nil} signs))
-        (difference
-          (extrude-linear {:height 2.5 :center nil} perimeter)
-          (extrude-linear {:height 2.5 :center nil} holes)
+           (union
+            (translate [0 0 2.5]
+                       (extrude-linear {:height 0.4 :center nil} signs))
+            (difference
+             (extrude-linear {:height 2.5 :center nil} perimeter)
+             (extrude-linear {:height 2.5 :center nil} holes)
 
-          (translate [0 0 1.5] clamps))))))
+             (translate [0 0 1.5] clamps))))))
 
-(spit "test-ic.scad"
-  (write-scad
-    (use "../ext/scad-redox-case/Lenbok_Utils/utils.scad")
-    (kbd []
-         :ic-loc [0 0 0]
-         ;; :tent-loc [[[9 -55] (- halfpi)]]
-         )))
+  (spit "_test-ic.scad"
+        (write-scad
+         (use "./scad-lenbok-utils/utils.scad")
+         (kbd []
+              :ic-loc [0 0 0]
+              ;; :tent-loc [[[9 -55] (- halfpi)]]
+              ))))
 
+(-main)
 1
