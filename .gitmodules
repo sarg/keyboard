@@ -1,3 +1,6 @@
 [submodule "scad-lenbok-utils"]
 	path = scad-lenbok-utils
 	url = git@github.com:Lenbok/scad-lenbok-utils.git
+[submodule "qmk_firmware"]
+	path = qmk_firmware
+	url = git@github.com:qmk/qmk_firmware.git

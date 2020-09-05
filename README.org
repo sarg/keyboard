@@ -15,7 +15,7 @@
 | encoder             |     5 |     1.78 |
 | knob                |    10 |     1.40 |
 | petg filament 1kg   |     1 |       30 |
-| petg leftover       |       |     -24. |
+| petg leftover       |       |      -24 |
 | soldering paste     |     1 |     2.29 |
 | soldering wire 100g |     1 |       11 |
 | soldering wire left |       |      -10 |
@@ -25,8 +25,8 @@
 | tent fixing nuts    |     4 |          |
 | tent nuts M5        |     4 |          |
 |---------------------+-------+----------|
-|                     |       |    62.93 |
-#+TBLFM: @>$3=vsum(@I..@II)::$3=::@15$3=@14$3 * -0.8
+| total               |       |    62.93 |
+#+TBLFM: @>$3=vsum(@I..@II)
 
 * Layout
 [[./layout_v1.jpg]]
@@ -126,24 +126,22 @@ Consult [[https://beta.docs.qmk.fm/developing-qmk/c-development/hardware_keyboar
 
 Create new template with =./util/new_keyboard.sh=
 
-#+BEGIN_SRC sh :dir sarg :results output :exports both
+#+BEGIN_SRC sh :dir firmware :results output :exports both
 tree --noreport
 #+END_SRC
 
 #+RESULTS:
 #+begin_example
 .
-├── config.h
-├── info.json
-├── keymaps
-│   └── default
-│       ├── config.h
-│       ├── keymap.c
-│       └── readme.md
-├── readme.md
-├── rules.mk
-├── sarg.c
-└── sarg.h
+|-- config.h
+|-- keymaps
+|   `-- default
+|       |-- config.h
+|       |-- keymap.c
+|       `-- readme.md
+|-- rules.mk
+|-- sarg.c
+`-- sarg.h
 #+end_example
 
 Let's go file by file to find minimal set of tweaks:
