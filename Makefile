@@ -9,4 +9,7 @@ qmk_firmware/keyboards/sarg:
 firmware: qmk_firmware/keyboards/sarg
 	cd qmk_firmware && bin/qmk compile -kb sarg -km default
 
+flash:
+	cd qmk_firmware && bin/qmk flash -kb sarg -km default
+
 .PHONY: all firmware
