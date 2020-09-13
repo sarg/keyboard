@@ -23,9 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VENDOR_ID 0xFEED
 #define PRODUCT_ID 0x0000
 #define DEVICE_VER 0x0001
-#define MANUFACTURER Sergey Trofimov
-#define PRODUCT sarg
-#define DESCRIPTION A custom keyboard
+#define MANUFACTURER Mommy Corp
+#define PRODUCT UnitZero
+#define DESCRIPTION Split keyboard
+
+#define TAPPING_TERM 300
+#define IGNORE_MOD_TAP_INTERRUPT
 
 /* key matrix size */
 #define MATRIX_ROWS 8

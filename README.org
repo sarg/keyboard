@@ -1,3 +1,7 @@
+My journey to this keyboard began with a birthday gift. I got a Microsoft Sculpt Comfort keyboard and finally learned the proper 10 finger typing method. Then I got into spacemacs and fell in love with the idea of using space as a leader key. And as a newly adopted emacs user I began using Ctrl and Alt heavily. Reaching for control required unnatural wrist movement and I got to know that the solution is to remap Caps as Ctrl. I was living with this hack for a while until I learned a better idea - to remap LCtrl with LAlt. That's when I started looking for the keyboards with shorter space, so that LCtrl is easily reachable by the left thumb. Eventually I stumbled upon a world of DIY keyboards and started dreaming about ergodox. It was too pricey and had not the ideal layout so I decided to build my own keeb.
+I had a rough understanding of what I'm aiming for - a handwired split keyboard with a orthogonal layout and a thumb cluster where I could leave hands on the home row indefinetely. So I started by ordering the parts - switches and caps.
+When the switches came I immediately started to design a layout for my keyboard which fits my hands the perfectly.
+
 * Parts
 
 | Name                |   Qty | Price, $ |
@@ -31,7 +35,7 @@
 * Layout
 [[./layout_v1.jpg]]
 
-- To find best layout for my hands I've put several stripes of masking tape glue side up on a sheet of paper.
+- To find a best layout for my hands I've put several stripes of masking tape glue side up on a sheet of paper.
 - Then I've adjusted columns to my liking and measured the offsets.
 - I have Gateron switches which are Cherry-MX compatible. So the hole size is 14x14 mm and distance between holes should be 5 mm.
 - Thumb cluster is parameterized in polar coordinates.
@@ -117,7 +121,7 @@ For first print I've prepare a single row of 5 keys where each hole has size $14
 * Hand-wiring
 [[https://deskthority.net/viewtopic.php?f=7&t=6050&start=][BrownFox step by step - deskthority]]
 
-The keyboard has 22 keys per hand - 3 rows of 6 columns and 4 thumb keys. It fits in a 4x6 matrix and requires =4+6=10= pins. Encoder takes 2 pins and serial connection takes another 1. In total: 10 pins for keys + 2 for encoder + 1 for serial + GND + VCC = 15 pins.
+The keyboard has 23 keys per hand - 3 rows of 6 columns and the fourth row of 4 thumb keys and an encoder button. It fits in a 4x6 matrix and requires =4+6=10= pins. Encoder takes 2 pins and serial connection takes another 1. In total: 10 pins for keys + 2 for encoder + 1 for serial + GND + VCC = 15 pins.
 
 Some pins has extra functions and they have to be used last.
 
@@ -194,3 +198,7 @@ Checking file size of sarg_default.hex                                          
 * TODO link
 
 Nicinabox has a [very nice and detailed guide](https://github.com/nicinabox/lets-split-guide) for the Let's Split keyboard, that covers most everything you need to know, including troubleshooting information.
+* GUIX
+#+BEGIN_SRC sh
+guix time-machine -C channels.scm -- environment --pure -m manifest.scm
+#+END_SRC
