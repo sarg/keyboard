@@ -1,4 +1,3 @@
-// -*- mode: scad; scad-preview-default-camera-parameters: (0 0 0 0 0 0 500) -*-
 /*
      ___
     /___\
@@ -14,11 +13,12 @@ hole_size = 14;
 deepening = 5;
 wiring_space = 5;
 thickness = 4;
-include <controller.scad>;
+use <controller.scad>;
 wall_height = wiring_space+thickness+deepening;
 mounting_plate_thickness = 1.5;
 wall_thickness = 2;
 sep = 5;
+ic_size = get_ic_size();
 ic_loc=[2.5*hole_size+3*sep+ic_size[0]/2+wall_thickness, -hole_size*4+35, 0];
 
 // thumb sector
@@ -71,7 +71,6 @@ module perimeter() {
             offset(delta=sep) allkeys()
             /* offset(r=-5) offset(r=5) */
             square(hole_size, center=true);
-
     }
 }
 
@@ -81,14 +80,11 @@ module clamp_space() {
 
 module wall() {
     linear_extrude(height=wall_height)
-    union() {
-        difference() {
-            offset(wall_thickness) children();
-            children();
-        }
+    difference() {
+        offset(wall_thickness) children();
+        children();
     }
 }
-
 
 module plate() {
     difference() {
@@ -100,18 +96,6 @@ module plate() {
         linear_extrude(height=thickness - mounting_plate_thickness)
             allkeys() clamp_space();
     }
-}
-
-module cherry_mx() {
-    include <cherry_mx.scad>;
-    translate([0,0,thickness]) keycap();
-}
-
-use <cap.scad>;
-
-module 3dkeys() {
-    translate([0,0,thickness])
-        allkeys() cherry_mx();
 }
 
 module perimeter_with_controller() {
@@ -142,9 +126,6 @@ module bottom() {
         }
 }
 
-
-
-
 module ear() {
     translate([0,0,-1])
     difference() {
@@ -154,7 +135,7 @@ module ear() {
             circle(d=12);
             square(6);
         }
-        cylinder(h=10,d=6);
+        cylinder(h=10,d=8.3);
     }
 }
 
@@ -172,6 +153,12 @@ module ears() {
 
     // bottom right
     translate(ic_loc+[-4,-39]) rotate(90) ear();
+}
+
+module usb() {
+    usb_w = 12; usb_h = 8;usb_l=15;
+    translate([0,usb_l/2, 0])
+        cube([usb_w, usb_l, usb_h], center=true);
 }
 
 module usb_cutout() {
@@ -192,16 +179,18 @@ module trrs_cutout() {
 module bottom_with_cutouts() {
     difference() {
         bottom();
-        translate(ic_loc+[0,0,wiring_space])
-            union() { usb_cutout(); trrs_cutout(); }
+        translate(ic_loc+[0,0,wiring_space]) {
+            usb_cutout();
+            trrs_cutout();
+        }
     }
 }
 
-module plate_part() {
+module plate_trimmed_for_assemble() {
     difference() {
         union() {
             plate();
-            translate(ic_loc) controller();
+            /* translate(ic_loc) controller(); */
         }
 
         // to ensure that the plate could be inserted into the case
@@ -214,22 +203,48 @@ module plate_part() {
     }
 }
 
-ears();
-bottom_with_cutouts();
-translate([0,0,wiring_space] + [200,0,0]) {
-    plate_part();
+module screws() {
+    translate([hole_size*0.5+sep+2+26,-(2.5*hole_size+3*sep+11)])
+        cylinder(h=10,d=6);
 
-    /* if ($preview) */
-        color("white", 0.5) 3dkeys();
+    translate([-47.5,-42.5-19])
+        cylinder(h=10,d=6);
+
 }
 
-/* if ($preview) */
+/* ears(); */
+color("red") screws();
+bottom_with_cutouts();
+translate([0,0,wiring_space] + [0,0,40]) {
+    ears();
+    plate_trimmed_for_assemble();
+
+    translate()
+        difference() {
+        cylinder(h=12+4.5,d=12);
+        cylinder(h=12+2,d=8);
+        cylinder(h=12+4.5,d=6);
+    }
+
+    if ($preview)
+        color("white", 0.5) 3dkeys();
+}
+perimeter();
+
+/* debug stuff */
+use <cap.scad>;
+
+module cherry_mx() {
+    include <cherry_mx.scad>;
+    translate([0,0,thickness]) keycap();
+}
+
+module 3dkeys() {
+    translate([0,0,thickness])
+        allkeys() cherry_mx();
+}
+
+if ($preview && false)
 {
     color("red") translate(ic_loc + [0,0,wiring_space]) trrs_socket();
-
-    /* color("black") */
-    /*     translate(ic_loc + [0, ic_size[1]/2+2.5, wiring_space+thickness+1]) */
-    /*         usb(); */
-
-
 }
