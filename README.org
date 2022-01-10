@@ -201,4 +201,10 @@ Nicinabox has a [very nice and detailed guide](https://github.com/nicinabox/lets
 * GUIX
 #+BEGIN_SRC sh
 guix time-machine -C channels.scm -- environment --pure -m manifest.scm
+python3 -m venv pyvenv
+source pyvenv/bin/activate
+pip3 install -U qmk
+
+make firmware
+make flash
 #+END_SRC

@@ -7,9 +7,9 @@ qmk_firmware/keyboards/sarg:
 	cd qmk_firmware/keyboards && ln -s ../../firmware sarg
 
 firmware: qmk_firmware/keyboards/sarg
-	cd qmk_firmware && bin/qmk compile -kb sarg -km default
+	qmk compile -kb sarg -km default
 
 flash:
-	cd qmk_firmware && bin/qmk flash -kb sarg -km default
+	qmk flash -kb sarg -km default
 
 .PHONY: all firmware
