@@ -7,9 +7,9 @@ qmk_firmware/keyboards/sarg:
 	cd qmk_firmware/keyboards && ln -s ../../firmware sarg
 
 firmware: qmk_firmware/keyboards/sarg
-	qmk compile -kb sarg -km default
+	guix shell avr-toolchain make -- make -C qmk_firmware sarg:default
 
 flash:
-	qmk flash -kb sarg -km default
+	guix shell avr-toolchain make -- make -C qmk_firmware sarg:default:avrdude
 
 .PHONY: all firmware

@@ -17,20 +17,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "config_common.h"
+#define TAPPING_TERM 200
+//#define PERMISSIVE_HOLD
+#define HOLD_ON_OTHER_KEYPRESS
 
-/* USB Device descriptor parameter */
-#define VENDOR_ID 0xFEED
-#define PRODUCT_ID 0x0000
-#define DEVICE_VER 0x0001
-#define MANUFACTURER Mommy Corp
-#define PRODUCT UnitZero
-#define DESCRIPTION Split keyboard
 
-#define TAPPING_TERM 300
-#define IGNORE_MOD_TAP_INTERRUPT
-
-/* key matrix size */
+/* matrix config */
 #define MATRIX_ROWS 8
 #define MATRIX_COLS 6
 
@@ -40,15 +32,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ENCODERS_PAD_A { D4 }
 #define ENCODERS_PAD_B { C6 }
 
-#define UNUSED_PINS
-
-/* COL2ROW, ROW2COL*/
 #define DIODE_DIRECTION COL2ROW
-
-/*
- * Split Keyboard specific options, make sure you have 'SPLIT_KEYBOARD = yes' in your rules.mk, and define SOFT_SERIAL_PIN.
- */
-#define USE_SERIAL
 #define SOFT_SERIAL_PIN D0
-
-#define DEBOUNCE 5
