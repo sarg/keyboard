@@ -208,3 +208,42 @@ pip3 install -U qmk
 make firmware
 make flash
 #+END_SRC
+* flashing qmk-dfu
+1. Flash avrisp2 firmware on promicro using avrdude
+   #+begin_src sh
+while read i; do if [ "$i" = ttyACM0 ]; then break; fi; done \
+   < <(inotifywait  -e create,open --format '%f' --quiet /dev --monitor)
+
+echo "Found device... flashing"
+avrdude  -patmega32u4 -c avr109 -P/dev/ttyACM0 -U flash:w:$1:i
+   #+end_src
+  #+begin_src sh
+   sh flash.sh ProMicro-AVRISP-MKII-PB4_PB6_PF4_as_RST.hex
+  #+end_src
+2. Solder 6 wires for ISP programming
+   https://github.com/elfmimi/ProMicro-AVRISP-mkII/releases/tag/promicro-avrisp2-v1.0
+   #+begin_example
+[ProMicro as AVRISP-mkII] <==> [Target ProMicro (or other AVR)]
+GND <--> GND
+VCC <--> VCC
+PF4 <--> RST
+PB1 <--> PB1 (SCK)
+PB3 <--> PB3 (MISO)
+PB2 <--> PB2 (MOSI)
+   #+end_example
+3. Flash QMK firmware with bootloader (production)
+   #+begin_src sh
+avrdude -p atmega32u4 -c avrisp2 -v -e -U lfuse:w:0x5E:m -U hfuse:w:0x99:m -U efuse:w:0xF3:m
+avrdude -p atmega32u4 -c avrisp2 -v -e -U flash:w:sarg_default_production.hex
+   #+end_src
+   Fuses are not magical. These basically set clock source, bootloader size and
+   enable some features of the chip. Sure the values should be chosen carefully, for that consult the official datasheet for the controller. See also:
+   https://rfong.github.io/rflog/2021/09/29/avr/
+   https://docs.qmk.fm/#/isp_flashing_guide?id=flashing-the-bootloader
+   https://www.engbedded.com/fusecalc/
+4. Repeat for the second ProMicro. Now that it has the dfu programmer, flash it this way
+   #+begin_src
+dfu-programmer atmega32u4 erase
+dfu-programmer atmega32u4 flash ProMicro-AVRISP-MKII-PB4_PB6_PF4_as_RST.hex
+   #+end_src
+5. From now on to flash the keyboard, press the QK_BOOT key (see layout) and it will reboot to bootloader.
