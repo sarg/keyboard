@@ -5,6 +5,12 @@
   "keyboard": "emajesty/eiri",
   "keymap": "keymap",
   "layout": "LAYOUT",
+  "encoders": [
+      [{"ccw": "KC_PGUP", "cw": "KC_PGDN"}, {"ccw": "MS_WHLU", "cw": "MS_WHLD"}],
+      [{"ccw": "KC_VOLD", "cw": "KC_VOLU"}, {"ccw": "KC_VOLD", "cw": "KC_VOLU"}],
+      [{"ccw": "KC_MEDIA_NEXT_TRACK", "cw": "KC_MEDIA_PREV_TRACK"}, {"ccw": "MS_WHLU", "cw": "MS_WHLD"}],
+      [{"ccw": "KC_PGUP", "cw": "KC_PGDN"}, {"ccw": "MS_WHLU", "cw": "MS_WHLD"}]
+  ],
   "layers": [
     [
       "KC_ESC",

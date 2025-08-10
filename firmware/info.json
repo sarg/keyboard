@@ -10,11 +10,13 @@
         "device_version": "0.0.1"
     },
     "features": {
-        "bootmagic": false,
+        "bootmagic": true,
         "mousekey": true,
         "extrakey": true,
-        "console": true,
-        "command": true,
+        "via": true,
+        "console": false,
+        "command": false,
+        "encoder_map": true,
         "nkro": false,
         "encoder": true
     },
