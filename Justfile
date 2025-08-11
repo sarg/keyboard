@@ -1,7 +1,7 @@
 default:
 	@just --list
 
-all:
+stl:
 	lein run
 	openscad -o left.stl _left.scad
 	openscad -o right.stl _right.scad
@@ -9,10 +9,27 @@ all:
 firmware:
 	guix build -f guix.scm
 
-svg:
-	keymap parse -q firmware/keymaps/default/keymap.json > k.yaml
-	keymap draw k.yaml > layout.svg
-	rm k.yaml
+svg: tangle
+	which keymap || pip install keymap-drawer
+	keymap draw <(keymap parse -q firmware/keymaps/default/keymap.json) > layout.svg
+
+eeprom: tangle
+	$(guix build -f qmk.scm)/bin/write_eeprom
+
+tangle:
+	#!/bin/sh
+	emacs -Q --batch --eval "
+	   (progn
+		(require 'ob-tangle)
+		(require 's)
+		(require 'dash)
+
+		(let ((org-confirm-babel-evaluate nil))
+		  (find-file \"keymap.org\")
+		  (search-forward \"helper\")
+		  (org-babel-execute-src-block)
+		  (org-babel-tangle)))"
+
 
 flash: firmware
 	#!/bin/sh
