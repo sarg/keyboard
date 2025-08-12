@@ -14,10 +14,7 @@
         "mousekey": true,
         "extrakey": true,
         "via": true,
-        "console": false,
-        "command": false,
         "encoder_map": true,
-        "nkro": false,
         "encoder": true
     },
     "processor": "atmega32u4",
@@ -36,7 +33,8 @@
     },
 
     "tapping": {
-        "hold_on_other_key_press": true,
+        "hold_on_other_keypress": true,
+        "permissive_hold": true,
         "term": 200
     },
 

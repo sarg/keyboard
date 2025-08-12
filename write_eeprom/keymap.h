@@ -17,7 +17,7 @@ const KEY keys[] = {
   { 0, 0, 4, KC_R },
   { 0, 0, 5, KC_T },
   { 0, 1, 0, KC_TAB },
-  { 0, 1, 1, LGUI_T(KC_A) },
+  { 0, 1, 1, KC_A },
   { 0, 1, 2, LALT_T(KC_S) },
   { 0, 1, 3, LCTL_T(KC_D) },
   { 0, 1, 4, LSFT_T(KC_F) },
@@ -40,7 +40,7 @@ const KEY keys[] = {
   { 0, 4, 4, KC_U },
   { 0, 4, 5, KC_Y },
   { 0, 5, 0, KC_QUOT },
-  { 0, 5, 1, RGUI_T(KC_SCLN) },
+  { 0, 5, 1, KC_SCLN },
   { 0, 5, 2, RALT_T(KC_L) },
   { 0, 5, 3, RCTL_T(KC_K) },
   { 0, 5, 4, RSFT_T(KC_J) },
@@ -65,8 +65,8 @@ const KEY keys[] = {
   { 1, 1, 0, KC_NO },
   { 1, 1, 1, KC_NO },
   { 1, 1, 2, KC_NO },
-  { 1, 1, 3, KC_NO },
-  { 1, 1, 4, KC_NO },
+  { 1, 1, 3, KC_PGUP },
+  { 1, 1, 4, KC_PGDN },
   { 1, 1, 5, KC_NO },
   { 1, 2, 0, KC_F1 },
   { 1, 2, 1, KC_F2 },
@@ -204,8 +204,20 @@ typedef struct ENCODER {
 } ENCODER;
 
 const ENCODER encoders[] = {
-  { 0, 0, false, KC_PGUP }, { 0, 0, true, KC_PGDN }, { 0, 1, false, KC_UP }, { 0, 1, true, KC_DOWN },
-  { 1, 0, false, KC_VOLD }, { 1, 0, true, KC_VOLU }, { 1, 1, false, KC_VOLD }, { 1, 1, true, KC_VOLU },
-  { 2, 0, false, KC_MEDIA_NEXT_TRACK }, { 2, 0, true, KC_MEDIA_PREV_TRACK }, { 2, 1, false, KC_UP }, { 2, 1, true, KC_DOWN },
-  { 3, 0, false, KC_NO }, { 3, 0, true, KC_NO }, { 3, 1, false, KC_NO }, { 3, 1, true, KC_NO }
+  { 0, 0, false, KC_PGUP },
+  { 0, 0, true, KC_PGDN },
+  { 0, 1, false, KC_UP },
+  { 0, 1, true, KC_DOWN },
+  { 1, 0, false, KC_VOLD },
+  { 1, 0, true, KC_VOLU },
+  { 1, 1, false, KC_VOLD },
+  { 1, 1, true, KC_VOLU },
+  { 2, 0, false, KC_MEDIA_NEXT_TRACK },
+  { 2, 0, true, KC_MEDIA_PREV_TRACK },
+  { 2, 1, false, KC_UP },
+  { 2, 1, true, KC_DOWN },
+  { 3, 0, false, KC_NO },
+  { 3, 0, true, KC_NO },
+  { 3, 1, false, KC_NO },
+  { 3, 1, true, KC_NO }
 };

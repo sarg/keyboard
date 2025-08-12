@@ -1,16 +1,16 @@
 * base
 ** left
 #+name: l0
-| ESC  | Q         | W         | E         | R         | T           |
-| TAB  | LGUI_T(A) | LALT_T(S) | LCTL_T(D) | LSFT_T(F) | G           |
-| MINS | Z         | X         | C         | V         | B           |
-| XXX  | ENT       | LGUI      | LALT      | MO(1)     | LGUI_T(ENT) |
+| ESC  | Q   | W         | E         | R         | T           |
+| TAB  | A   | LALT_T(S) | LCTL_T(D) | LSFT_T(F) | G           |
+| MINS | Z   | X         | C         | V         | B           |
+| XXX  | ENT | LGUI      | LALT      | MO(1)     | LGUI_T(ENT) |
 ** right
 #+name: r0
-| Y           | U         | I         | O         | P            | BSPC |
-| H           | RSFT_T(J) | RCTL_T(K) | RALT_T(L) | RGUI_T(SCLN) | QUOT |
-| N           | M         | COMM      | DOT       | SLSH         | BSLS |
-| RALT_T(SPC) | MO(2)     | RALT      | RGUI      | ENT          | XXX  |
+| Y           | U         | I         | O         | P    | BSPC |
+| H           | RSFT_T(J) | RCTL_T(K) | RALT_T(L) | SCLN | QUOT |
+| N           | M         | COMM      | DOT       | SLSH | BSLS |
+| RALT_T(SPC) | MO(2)     | RALT      | RGUI      | ENT  | XXX  |
 ** encoders
 #+name: e0
 | PGUP | PGDN  |
@@ -18,10 +18,10 @@
 * digits
 ** left
 #+name: l1
-| GRV | 1       |  2 | 3     |  4 |  5 |
-|     |         |    |       |    |    |
-| F1  | F2      | F3 | F4    | F5 | F6 |
-| XXX | QK_BOOT |    | TO(3) |    |    |
+| GRV | 1       |  2 | 3     | 4    |  5 |
+|     |         |    | PGUP  | PGDN |    |
+| F1  | F2      | F3 | F4    | F5   | F6 |
+| XXX | QK_BOOT |    | TO(3) |      |    |
 ** right
 #+name: r1
 | 6    | 7    | 8  | 9    | 0    | MINS |
@@ -75,14 +75,14 @@
                               (group (+ anychar) ")"))
                           k)))
          (fn (and m (nth 1 m)))
-         (arg (and m (nth 2 m))))
+         (arg (and m (nth 2 m)))
+         (fn-as-is (member fn '("MO" "TO"))))
 
     (cond
      ((numberp k) (format "KC_%d" k))
      ((string-empty-p k) "KC_NO")
      ((string-equal "XXX" k) nil)
-     ((string-equal "MO" fn) k)
-     ((string-equal "TO" fn) k)
+     (fn-as-is k)
      (fn (concat fn "(KC_" arg))
      ((s-starts-with? "QK_" k) k)
      (t (concat "KC_" k)))))
@@ -101,12 +101,13 @@
 
 #+name: encoder
 #+begin_src elisp :var e=e0
-(s-join ", "
-(-map
- (lambda (enc)
-   (apply #'format "{\"ccw\": %S, \"cw\": %S}"
-          (-map #'qmk/keyname enc)))
- e))
+(s-join
+ ", "
+ (-map
+  (lambda (enc)
+    (apply #'format "{\"ccw\": %S, \"cw\": %S}"
+           (-map #'qmk/keyname enc)))
+  e))
 #+end_src
 
 #+begin_src js :tangle firmware/keymaps/default/keymap.json :noweb yes
@@ -143,13 +144,14 @@
 
 #+name: cencoder
 #+begin_src elisp :var e=e0 :var l=0
-(s-join ", "
-        (-map-indexed
-         (lambda (idx enc)
-           (format "{ %d, %d, false, %s }, { %d, %d, true, %s }"
-                   l idx (qmk/keyname (nth 0 enc))
-                   l idx (qmk/keyname (nth 1 enc))))
-         e))
+(s-join
+ ",\n"
+ (-map-indexed
+  (lambda (idx enc)
+    (format "{ %d, %d, false, %s },\n{ %d, %d, true, %s }"
+            l idx (qmk/keyname (nth 0 enc))
+            l idx (qmk/keyname (nth 1 enc))))
+  e))
 #+end_src
 
 #+name: clayer
