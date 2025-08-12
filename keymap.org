@@ -47,7 +47,7 @@
 |      |      |      |      |      | XXX |
 ** encoders
 #+name: e2
-| MEDIA_NEXT_TRACK | MEDIA_PREV_TRACK |
+| MEDIA_PREV_TRACK | MEDIA_NEXT_TRACK |
 | UP               | DOWN             |
 * gaming
 ** left

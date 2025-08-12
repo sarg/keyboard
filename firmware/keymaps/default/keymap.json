@@ -9,7 +9,7 @@
   "encoders": [
       [{"ccw": "KC_PGUP", "cw": "KC_PGDN"}, {"ccw": "KC_UP", "cw": "KC_DOWN"}],
       [{"ccw": "KC_VOLD", "cw": "KC_VOLU"}, {"ccw": "KC_VOLD", "cw": "KC_VOLU"}],
-      [{"ccw": "KC_MEDIA_NEXT_TRACK", "cw": "KC_MEDIA_PREV_TRACK"}, {"ccw": "KC_UP", "cw": "KC_DOWN"}],
+      [{"ccw": "KC_MEDIA_PREV_TRACK", "cw": "KC_MEDIA_NEXT_TRACK"}, {"ccw": "KC_UP", "cw": "KC_DOWN"}],
       [{"ccw": "KC_NO", "cw": "KC_NO"}, {"ccw": "KC_NO", "cw": "KC_NO"}]
   ],
   "layers": [
