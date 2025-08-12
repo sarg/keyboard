@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     struct hid_device_info *devs, *cur_dev;
 
     handle = NULL; // Initialize handle to NULL
-    devs = hid_enumerate(0xfeed, 0x0);
+    devs = hid_enumerate(0, 0);
 
     if (!devs) {
         hid_exit();
