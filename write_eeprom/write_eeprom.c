@@ -1,7 +1,27 @@
 #include <stdio.h> // printf
 #include <wchar.h> // wchar_t
-
 #include <hidapi.h>
+#include <quantum_keycodes.h>
+#include <modifiers.h>
+#include <stdint.h>
+
+typedef struct KEY {
+  uint8_t layer;
+  uint8_t row;
+  uint8_t col;
+  uint16_t keycode;
+  bool diff;
+} KEY;
+
+typedef struct ENCODER {
+  uint8_t layer;
+  uint8_t idx;
+  bool clockwise;
+  uint16_t keycode;
+  bool diff;
+} ENCODER;
+
+#define NO false
 #include "keymap.h"
 
 #define MAX_STR 255
@@ -9,6 +29,7 @@
 int main(int argc, char* argv[])
 {
     int res;
+    bool diffmode = argc == 1;
     wchar_t wstr[MAX_STR];
     hid_device *handle;
     int i;
@@ -59,6 +80,8 @@ int main(int argc, char* argv[])
 
     for (int i=0; i<sizeof(keys)/sizeof(KEY); i++) {
         const KEY key = keys[i];
+        if (diffmode && !key.diff) continue;
+
         unsigned char buf[7] = {
             0x0, 0x05, key.layer, key.row, key.col, key.keycode >> 8, key.keycode & 0xFF
         };
@@ -79,6 +102,8 @@ int main(int argc, char* argv[])
 
     for (int i=0; i<sizeof(encoders)/sizeof(ENCODER); i++) {
         const ENCODER enc = encoders[i];
+        if (diffmode && !enc.diff) continue;
+
         unsigned char buf[7] = {
             0x0, 0x15, enc.layer, enc.idx, enc.clockwise, enc.keycode >> 8, enc.keycode & 0xFF
         };

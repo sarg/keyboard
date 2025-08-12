@@ -13,8 +13,16 @@ svg: tangle
 	which keymap || pip install keymap-drawer
 	keymap draw <(keymap parse -q firmware/keymaps/default/keymap.json) > layout.svg
 
-eeprom: tangle
-	$(guix build -f qmk.scm)/bin/write_eeprom
+eeprom *args='': tangle
+	git diff write_eeprom/keymap.h > tmp
+	sed '/^\+/s/NO }/true }/' <tmp >pt
+	git checkout write_eeprom/keymap.h
+	patch -p1 <pt
+	$(guix build -f qmk.scm --no-substitutes)/bin/write_eeprom {{args}}
+	git checkout write_eeprom/keymap.h
+	patch -p1 <tmp
+	rm pt tmp
+
 
 tangle:
 	#!/bin/sh

@@ -84,7 +84,7 @@
      ((string-equal "XXX" k) nil)
      (fn-as-is k)
      (fn (concat fn "(KC_" arg))
-     ((s-starts-with? "QK_" k) k)
+     ((s-match "^.._" k) k)
      (t (concat "KC_" k)))))
 #+end_src
 
@@ -148,7 +148,7 @@
  ",\n"
  (-map-indexed
   (lambda (idx enc)
-    (format "{ %d, %d, false, %s },\n{ %d, %d, true, %s }"
+    (format "{ %d, %d, false, %s, NO },\n{ %d, %d, true, %s, NO }"
             l idx (qmk/keyname (nth 0 enc))
             l idx (qmk/keyname (nth 1 enc))))
   e))
@@ -165,36 +165,18 @@
             (-map-indexed
              (lambda (col key)
                (when-let ((skey (qmk/keyname key)))
-                  (format "{ %d, %d, %d, %s }" i row col skey)))
+                  (format "{ %d, %d, %d, %s, NO }" i row col skey)))
              keys))
           (append l (-map #'reverse r)))))))
 #+end_src
 
 #+begin_src c :tangle write_eeprom/keymap.h :noweb yes
-#include <quantum_keycodes.h>
-#include <modifiers.h>
-#include <stdint.h>
-
-typedef struct KEY {
-  uint8_t layer;
-  uint8_t row;
-  uint8_t col;
-  uint16_t keycode;
-} KEY;
-
 const KEY keys[] = {
   <<clayer(l0, r0, 0)>>,
   <<clayer(l1, r1, 1)>>,
   <<clayer(l2, r2, 2)>>,
   <<clayer(l3, r3, 3)>>
 };
-
-typedef struct ENCODER {
-  uint8_t layer;
-  uint8_t idx;
-  bool clockwise;
-  uint16_t keycode;
-} ENCODER;
 
 const ENCODER encoders[] = {
   <<cencoder(e0, 0)>>,
