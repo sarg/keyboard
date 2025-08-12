@@ -18,7 +18,7 @@ const KEY keys[] = {
   { 0, 2, 4, KC_V, NO },
   { 0, 2, 5, KC_B, NO },
   { 0, 3, 1, KC_ENT, NO },
-  { 0, 3, 2, KC_LGUI, NO },
+  { 0, 3, 2, KC_MYCM, NO },
   { 0, 3, 3, KC_LALT, NO },
   { 0, 3, 4, MO(1), NO },
   { 0, 3, 5, LGUI_T(KC_ENT), NO },

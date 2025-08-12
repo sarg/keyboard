@@ -4,7 +4,7 @@
 | ESC  | Q   | W         | E         | R         | T           |
 | TAB  | A   | LALT_T(S) | LCTL_T(D) | LSFT_T(F) | G           |
 | MINS | Z   | X         | C         | V         | B           |
-| XXX  | ENT | LGUI      | LALT      | MO(1)     | LGUI_T(ENT) |
+| XXX  | ENT | MYCM      | LALT      | MO(1)     | LGUI_T(ENT) |
 ** right
 #+name: r0
 | Y           | U         | I         | O         | P    | BSPC |
