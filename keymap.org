@@ -185,3 +185,7 @@ const ENCODER encoders[] = {
   <<cencoder(e3, 3)>>
 };
 #+end_src
+
+# Local Variables:
+# compile-command: "just eeprom"
+# End:
