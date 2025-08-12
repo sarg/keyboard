@@ -27,7 +27,7 @@
 | 6    | 7    | 8  | 9    | 0    | MINS |
 | LEFT | DOWN | UP | RGHT |      |      |
 | F7   | F8   | F9 | F10  | F11  | F12  |
-| RSFT |      |    |      | MPLY | XXX  |
+| RSFT | LGUI |    |      | MPLY | XXX  |
 ** encoders
 #+name: e1
 | VOLD | VOLU |

@@ -21,6 +21,7 @@ eeprom *args='': tangle
 	$(guix build -f qmk.scm --no-substitutes)/bin/write_eeprom {{args}}
 	git checkout write_eeprom/keymap.h
 	patch -p1 <tmp
+	git add write_eeprom/keymap.h
 	rm pt tmp
 
 

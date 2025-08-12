@@ -89,7 +89,7 @@ const KEY keys[] = {
   { 1, 7, 1, KC_MPLY, NO },
   { 1, 7, 2, KC_NO, NO },
   { 1, 7, 3, KC_NO, NO },
-  { 1, 7, 4, KC_NO, NO },
+  { 1, 7, 4, KC_LGUI, NO },
   { 1, 7, 5, KC_RSFT, NO },
   { 2, 0, 0, KC_TILD, NO },
   { 2, 0, 1, KC_EXLM, NO },
