@@ -45,6 +45,7 @@
     },
 
     "split": {
+        "handedness": {"pin": "F4"},
         "soft_serial_pin": "D0",
         "enabled": true
     },

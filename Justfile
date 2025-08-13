@@ -10,7 +10,7 @@ stl:
 
 # build firmware
 firmware:
-	guix build -f guix.scm
+	guix build -q -f guix.scm
 
 # generate SVG layout printout
 svg: tangle
